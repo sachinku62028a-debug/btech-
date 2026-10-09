@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B.Tech Notes Hub - Engineering Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #090d16;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body class="text-slate-100 bg-slate-950 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- NAVIGATION BAR -->
+    <header class="bg-slate-900/90 border-b border-slate-800/80 sticky top-0 z-30 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            
+            <!-- Logo / Brand -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchRole('student')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center text-white text-lg font-black shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-base sm:text-lg leading-tight tracking-wide text-white">
+                        B.Tech<span class="text-indigo-400">NotesHub</span>
+                    </h1>
+                    <p class="text-[10px] text-slate-400 font-medium">Engineering Study Material & PYQs</p>
+                </div>
+            </div>
+
+            <!-- Role Selector Controls -->
+            <div class="flex items-center space-x-3">
+                <!-- Current Active Mode Indicator Badge -->
+                <div id="roleBadge" class="hidden sm:flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 text-indigo-300 border border-slate-700">
+                    <span id="roleBadgeDot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span id="roleBadgeText">Student View</span>
+                </div>
+
+                <!-- Toggle Buttons -->
+                <div class="bg-slate-950 p-1 rounded-xl flex items-center space-x-1 border border-slate-800">
+                    <button id="btnRoleStudent" onclick="switchRole('student')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center space-x-1.5 bg-indigo-600 text-white shadow">
+                        <i class="fa-solid fa-user-graduate"></i>
+                        <span>Student View</span>
+                    </button>
+                    <button id="btnRoleAdmin" onclick="openAdminModal()" class="px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all duration-200 flex items-center space-x-1.5">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span>Admin Portal</span>
+                        <i class="fa-solid fa-lock text-[10px] text-amber-400 ml-0.5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Notification Toasts -->
+    <div id="toastContainer" class="fixed top-20 right-4 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ========================================== -->
+        <!-- 1. STUDENT VIEW (Read & Download Only)    -->
+        <!-- ========================================== -->
+        <section id="studentZone" class="space-y-6">
+            
+            <!-- Hero Search Header -->
+            <div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-slate-950 border border-indigo-900/50 rounded-3xl p-6 md:p-8 text-white shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <span class="inline-flex items-center space-x-1.5 px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-xs font-semibold text-indigo-300 mb-2">
+                                <i class="fa-solid fa-book-open"></i>
+                                <span>Student Download Portal</span>
+                            </span>
+                            <h2 class="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
+                                B.Tech Notes, Question Papers & Lab Code
+                            </h2>
+                            <p class="text-slate-400 text-xs sm:text-sm mt-1 max-w-2xl">
+                                Select your engineering branch & semester to view or download verified notes uploaded by Admin.
+                            </p>
+                        </div>
+                        <button onclick="openAdminModal()" class="self-start md:self-auto px-4 py-2 bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 rounded-xl font-bold text-xs transition flex items-center space-x-2">
+                            <i class="fa-solid fa-key text-amber-400"></i>
+                            <span>Admin Login to Upload Notes</span>
+                        </button>
+                    </div>
+
+                    <!-- Filter Controls -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-slate-900/90 p-3 rounded-2xl border border-slate-800">
+                        <!-- Keyword Search -->
+                        <div class="relative col-span-1 sm:col-span-2 lg:col-span-1">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+                            <input type="text" id="filterKeyword" onkeyup="renderStudentNotes()" placeholder="Search DBMS, DSA, Maths..." class="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 rounded-xl focus:outline-none focus:border-indigo-500 text-xs">
+                        </div>
+
+                        <!-- Branch Selector -->
+                        <div>
+                            <select id="filterBranch" onchange="renderStudentNotes()" class="w-full bg-slate-950 border border-slate-800 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-indigo-500">
+                                <option value="all">All Branches</option>
+                                <option value="CSE">Computer Science (CSE)</option>
+                                <option value="IT">Information Tech (IT)</option>
+                                <option value="AI_ML">AI & Machine Learning</option>
+                                <option value="ECE">Electronics (ECE)</option>
+                                <option value="EE">Electrical (EE)</option>
+                                <option value="ME">Mechanical (ME)</option>
+                                <option value="CE">Civil Engineering (CE)</option>
+                            </select>
+                        </div>
+
+                        <!-- Semester Selector -->
+                        <div>
+                            <select id="filterSem" onchange="renderStudentNotes()" class="w-full bg-slate-950 border border-slate-800 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-indigo-500">
+                                <option value="all">All Semesters (1 - 8)</option>
+                                <option value="Sem 1">Semester 1</option>
+                                <option value="Sem 2">Semester 2</option>
+                                <option value="Sem 3">Semester 3</option>
+                                <option value="Sem 4">Semester 4</option>
+                                <option value="Sem 5">Semester 5</option>
+                                <option value="Sem 6">Semester 6</option>
+                                <option value="Sem 7">Semester 7</option>
+                                <option value="Sem 8">Semester 8</option>
+                            </select>
+                        </div>
+
+                        <!-- Material Type Selector -->
+                        <div>
+                            <select id="filterCategory" onchange="renderStudentNotes()" class="w-full bg-slate-950 border border-slate-800 text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-indigo-500">
+                                <option value="all">All Material Types</option>
+                                <option value="Handwritten Notes">Handwritten Notes</option>
+                                <option value="PYQs & Solutions">PYQs & Solutions</option>
+                                <option value="Lab Code & Manuals">Lab Code & Manuals</option>
+                                <option value="GATE Study Material">GATE Material</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Department Notice Board -->
+            <div id="noticeBanner" class="bg-indigo-950/40 border border-indigo-800/40 rounded-2xl p-4 flex items-start space-x-3">
+                <div class="p-2.5 bg-indigo-600 text-white rounded-xl shrink-0">
+                    <i class="fa-solid fa-bullhorn text-sm"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="font-bold text-indigo-200 text-xs uppercase tracking-wider">Admin / Department Notices</h4>
+                    <div id="studentNoticeList" class="mt-1 text-xs text-slate-300 space-y-1">
+                        <!-- Dynamic Notices -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Tabs: All Notes vs Bookmarks -->
+            <div class="flex border-b border-slate-800 space-x-6 text-xs sm:text-sm font-semibold">
+                <button id="sTabAll" onclick="switchStudentTab('all')" class="pb-3 text-indigo-400 border-b-2 border-indigo-500 flex items-center space-x-2">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>Available Notes & Material</span>
+                </button>
+                <button id="sTabSaved" onclick="switchStudentTab('saved')" class="pb-3 text-slate-400 hover:text-indigo-300 flex items-center space-x-2">
+                    <i class="fa-solid fa-bookmark"></i>
+                    <span>My Bookmarks (<span id="bookmarkCount">0</span>)</span>
+                </button>
+                <button id="sTabRequest" onclick="switchStudentTab('request')" class="pb-3 text-slate-400 hover:text-indigo-300 flex items-center space-x-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Request Specific Note</span>
+                </button>
+            </div>
+
+            <!-- Notes Grid -->
+            <div id="studentNotesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Dynamic Notes Rendered Here -->
+            </div>
+
+            <!-- Student Note Request Section (Hidden by default) -->
+            <div id="studentRequestSection" class="hidden space-y-6 max-w-4xl mx-auto">
+                <!-- Submit Request Form -->
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl">
+                    <h3 class="text-base font-bold text-slate-100 mb-1 flex items-center space-x-2">
+                        <i class="fa-solid fa-envelope-open-text text-indigo-400"></i>
+                        <span>Need a Note That Isn't Uploaded Yet?</span>
+                    </h3>
+                    <p class="text-xs text-slate-400 mb-4">Send a direct note request to the Admin. Admin will reply & upload it shortly.</p>
+
+                    <form onsubmit="handleSendStudentRequest(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Your Name / Roll No.</label>
+                                <input type="text" id="reqStudentName" required placeholder="e.g. Sachin Sharma (CSE)" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Subject Name / Code</label>
+                                <input type="text" id="reqSubject" required placeholder="e.g. Compiler Design (CS-601)" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Message / Specific Unit Details</label>
+                            <textarea id="reqMessage" rows="3" required placeholder="e.g. Please upload Unit 3 and Unit 4 handwritten notes for upcoming mid-sem..." class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none custom-scrollbar"></textarea>
+                        </div>
+
+                        <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl shadow transition flex items-center space-x-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Submit Request to Admin</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Student View: Request Status & Admin Replies List -->
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h4 class="font-bold text-slate-100 text-sm flex items-center space-x-2">
+                            <i class="fa-solid fa-reply-all text-amber-400"></i>
+                            <span>Recent Student Requests & Admin Replies</span>
+                        </h4>
+                        <span class="text-[10px] text-slate-500">Live Status Tracker</span>
+                    </div>
+
+                    <div id="studentRequestsRepliesList" class="space-y-3">
+                        <!-- Dynamic Request Replies -->
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 2. ADMIN PORTAL (Password Protected)      -->
+        <!-- ========================================== -->
+        <section id="adminZone" class="hidden space-y-6">
+
+            <!-- Admin Banner -->
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-tr from-amber-500 to-indigo-600 text-slate-950 rounded-2xl flex items-center justify-center text-2xl font-black shadow-lg">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h2 class="text-lg font-extrabold">Admin Upload & Control Dashboard</h2>
+                            <span class="px-2.5 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold rounded-full uppercase">Full Access</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5">Upload B.Tech notes, delete attached PDFs, post notices, and manage student requests.</p>
+                    </div>
+                </div>
+
+                <button onclick="lockAdminPortal()" class="self-start sm:self-auto px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>Logout Admin</span>
+                </button>
+            </div>
+
+            <!-- Admin Storage Meter Bar (10 GB High Capacity Engine) -->
+            <div class="bg-slate-900 p-5 rounded-2xl border border-indigo-900/50 shadow-xl space-y-3">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-database text-cyan-400 text-base"></i>
+                        <span class="text-xs font-bold text-slate-200">IndexedDB Storage Space (Up to 10 GB Supported)</span>
+                        <span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold rounded border border-emerald-500/20">High Capacity Active</span>
+                    </div>
+                    <div class="text-xs font-mono text-indigo-300 font-bold" id="storageUsageText">
+                        0 MB / 10,000 MB (0.0% Used)
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-slate-800 p-0.5">
+                    <div id="storageProgressBar" class="bg-gradient-to-r from-cyan-500 to-indigo-500 h-full rounded-full transition-all duration-500" style="width: 0.1%;"></div>
+                </div>
+
+                <p class="text-[11px] text-slate-400">
+                    <i class="fa-solid fa-circle-info text-indigo-400 mr-1"></i> Note files and heavy PDFs are now saved in IndexedDB storage engine, allowing you to upload up to 10 GB of study materials directly in your browser.
+                </p>
+            </div>
+
+            <!-- Admin Quick Stats -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-3">
+                    <div class="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
+                        <i class="fa-solid fa-file-lines text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-semibold text-slate-400">Uploaded Notes</p>
+                        <p id="statTotalNotes" class="text-xl font-black text-slate-100">0</p>
+                    </div>
+                </div>
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-3">
+                    <div class="p-3 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20">
+                        <i class="fa-solid fa-file-pdf text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-semibold text-slate-400">PDF Documents</p>
+                        <p id="statTotalPdfs" class="text-xl font-black text-slate-100">0</p>
+                    </div>
+                </div>
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-3">
+                    <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
+                        <i class="fa-solid fa-inbox text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-semibold text-slate-400">Note Requests</p>
+                        <p id="statRequests" class="text-xl font-black text-slate-100">0</p>
+                    </div>
+                </div>
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-3">
+                    <div class="p-3 bg-cyan-500/10 text-cyan-400 rounded-xl border border-cyan-500/20">
+                        <i class="fa-solid fa-bullhorn text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-semibold text-slate-400">Active Notices</p>
+                        <p id="statNotices" class="text-xl font-black text-slate-100">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Nav Sub-Tabs -->
+            <div class="flex border-b border-slate-800 space-x-4 text-xs sm:text-sm font-semibold overflow-x-auto custom-scrollbar pb-1">
+                <button id="aTabUpload" onclick="switchAdminTab('upload')" class="pb-3 text-indigo-400 border-b-2 border-indigo-500 flex items-center space-x-2 shrink-0">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span>Upload New Note / PDF</span>
+                </button>
+                <button id="aTabManage" onclick="switchAdminTab('manage')" class="pb-3 text-slate-400 hover:text-indigo-300 flex items-center space-x-2 shrink-0">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Manage Notes & PDFs</span>
+                </button>
+                <button id="aTabRequests" onclick="switchAdminTab('requests')" class="pb-3 text-slate-400 hover:text-indigo-300 flex items-center space-x-2 shrink-0">
+                    <i class="fa-solid fa-envelope"></i>
+                    <span>Student Requests</span>
+                </button>
+                <button id="aTabNotices" onclick="switchAdminTab('notices')" class="pb-3 text-slate-400 hover:text-indigo-300 flex items-center space-x-2 shrink-0">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>Notices & Circulars</span>
+                </button>
+                <button id="aTabSecurity" onclick="switchAdminTab('security')" class="pb-3 text-slate-400 hover:text-indigo-300 flex items-center space-x-2 shrink-0">
+                    <i class="fa-solid fa-key"></i>
+                    <span>Change Password</span>
+                </button>
+            </div>
+
+            <!-- Admin Section 1: Upload Form -->
+            <div id="aSecUpload" class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl">
+                <h3 class="text-base font-bold text-slate-100 mb-4 flex items-center space-x-2">
+                    <i class="fa-solid fa-file-circle-plus text-indigo-400"></i>
+                    <span>Upload Notes & PDFs for Students</span>
+                </h3>
+
+                <form onsubmit="handleAdminUploadNote(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Subject & Note Title *</label>
+                            <input type="text" id="addTitle" required placeholder="e.g. Operating Systems - Process Scheduling Notes" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Engineering Branch / Stream *</label>
+                            <select id="addBranch" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                                <option value="CSE">Computer Science (CSE)</option>
+                                <option value="IT">Information Tech (IT)</option>
+                                <option value="AI_ML">AI & Machine Learning</option>
+                                <option value="ECE">Electronics (ECE)</option>
+                                <option value="EE">Electrical (EE)</option>
+                                <option value="ME">Mechanical (ME)</option>
+                                <option value="CE">Civil Engineering (CE)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Semester *</label>
+                            <select id="addSem" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                                <option value="Sem 1">Sem 1</option>
+                                <option value="Sem 2">Sem 2</option>
+                                <option value="Sem 3">Sem 3</option>
+                                <option value="Sem 4">Sem 4</option>
+                                <option value="Sem 5">Sem 5</option>
+                                <option value="Sem 6">Sem 6</option>
+                                <option value="Sem 7">Sem 7</option>
+                                <option value="Sem 8">Sem 8</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Resource Category *</label>
+                            <select id="addCategory" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                                <option value="Handwritten Notes">Handwritten Notes</option>
+                                <option value="PYQs & Solutions">PYQs & Solutions</option>
+                                <option value="Lab Code & Manuals">Lab Code & Manuals</option>
+                                <option value="GATE Study Material">GATE Study Material</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Uploader / Admin Name *</label>
+                            <input type="text" id="addAuthor" value="Admin" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Note Summary, Formulas, or Code Text Content *</label>
+                        <textarea id="addContent" rows="4" required placeholder="Type or paste note text, key formulas, or code snippets here so students can preview and download it..." class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none custom-scrollbar"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">
+                                <i class="fa-solid fa-file-pdf text-rose-400 mr-1"></i> Attach PDF File (IndexedDB 10GB Engine)
+                            </label>
+                            
+                            <!-- Hidden File Input -->
+                            <input type="file" id="addPdfFileInput" accept="application/pdf" onchange="handlePdfFileSelect(event)" class="hidden">
+                            
+                            <!-- PDF Dropzone Button -->
+                            <div id="pdfDropzone" onclick="document.getElementById('addPdfFileInput').click()" class="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl p-3 text-center cursor-pointer bg-slate-900/50 transition">
+                                <i class="fa-solid fa-cloud-arrow-up text-indigo-400 text-lg mb-1"></i>
+                                <p class="text-xs font-medium text-slate-300">Click to Select PDF Document</p>
+                                <p class="text-[10px] text-slate-500">IndexedDB Engine: Supports up to 10 GB total files</p>
+                            </div>
+
+                            <!-- PDF File Selected State -->
+                            <div id="pdfFileInfo" class="hidden flex items-center justify-between bg-indigo-950/50 border border-indigo-500/30 p-2.5 rounded-xl mt-1">
+                                <div class="flex items-center space-x-2 min-w-0">
+                                    <i class="fa-solid fa-file-pdf text-rose-400 text-base shrink-0"></i>
+                                    <div class="truncate text-xs">
+                                        <p id="pdfFileName" class="font-bold text-slate-100 truncate">file.pdf</p>
+                                        <p id="pdfFileSize" class="text-[10px] text-slate-400">0 KB</p>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="removeSelectedPdf()" class="text-slate-400 hover:text-rose-400 text-xs px-2 py-1" title="Remove PDF">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">OR External PDF / Drive URL (Optional)</label>
+                            <input type="url" id="addPdfUrl" placeholder="https://drive.google.com/file/d/... (Optional link)" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                            <p class="text-[10px] text-slate-500 mt-1">Direct PDF upload or drive URL link option.</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl shadow-lg transition flex items-center space-x-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>Publish Note to Student Portal</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Admin Section 2: Manage Notes & PDF Deletion Table -->
+            <div id="aSecManage" class="hidden bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-100">Manage Published Notes & PDFs</h3>
+                        <p class="text-xs text-slate-400">You can delete individual PDF files attached to notes or delete entire notes.</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider">
+                                <th class="p-3">Title & Subject</th>
+                                <th class="p-3">Branch & Sem</th>
+                                <th class="p-3">Attached PDF Status</th>
+                                <th class="p-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody">
+                            <!-- Dynamic Table Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Admin Section 3: Student Requests -->
+            <div id="aSecRequests" class="hidden bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-100">Student Note Requests & Admin Reply</h3>
+                        <p class="text-xs text-slate-400">Reply to student requests or delete resolved requests to free up storage space.</p>
+                    </div>
+                </div>
+
+                <div id="adminRequestsList" class="space-y-4">
+                    <!-- Dynamic Requests with Reply & Delete Buttons -->
+                </div>
+            </div>
+
+            <!-- Admin Section 4: Notice Manager -->
+            <div id="aSecNotices" class="hidden space-y-6">
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl">
+                    <h3 class="text-base font-bold text-slate-100 mb-3">Post Announcement / Department Notice</h3>
+                    <form onsubmit="handlePostNotice(event)" class="space-y-3">
+                        <input type="text" id="noticeInput" required placeholder="e.g. Mid-Sem exam notes uploaded for 3rd sem CSE." class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                        <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition">
+                            Post Notice
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl">
+                    <h4 class="font-bold text-slate-200 text-xs uppercase tracking-wider mb-3">Active Notices</h4>
+                    <div id="adminNoticesList" class="space-y-2">
+                        <!-- Dynamic Notices -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Section 5: Security / Password Update -->
+            <div id="aSecSecurity" class="hidden bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl max-w-xl">
+                <h3 class="text-base font-bold text-slate-100 mb-1 flex items-center space-x-2">
+                    <i class="fa-solid fa-lock text-amber-400"></i>
+                    <span>Admin Password Settings</span>
+                </h3>
+                <p class="text-xs text-slate-400 mb-4">Change the password required to open the Admin Portal.</p>
+
+                <form onsubmit="handleChangeAdminPassword(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Current Password *</label>
+                        <input type="password" id="currPassInput" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">New Password *</label>
+                        <input type="password" id="newPassInput" required minlength="4" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                    </div>
+                    <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl shadow transition">
+                        Update Password
+                    </button>
+                </form>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ADMIN AUTHENTICATION MODAL -->
+    <div id="adminAuthModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-800 overflow-hidden">
+            <div class="bg-indigo-950 px-6 py-4 text-white border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-user-shield text-amber-400"></i>
+                    <h3 class="font-bold text-sm">Admin Password Protection</h3>
+                </div>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleAdminLogin(event)" class="p-6 space-y-4">
+                <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-xs text-amber-200">
+                    <p class="font-bold"><i class="fa-solid fa-circle-info mr-1"></i> Default Admin Password: <span class="underline"></span></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Enter Admin Password</label>
+                    <input type="password" id="adminPassInput" required placeholder="••••••••" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                </div>
+
+                <div id="adminAuthError" class="hidden text-xs text-rose-400 font-semibold bg-rose-500/10 p-2.5 rounded-xl border border-rose-500/20">
+                    Incorrect password! Please try again.
+                </div>
+
+                <div class="flex items-center justify-end space-x-3 pt-2">
+                    <button type="button" onclick="closeAdminModal()" class="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl shadow transition">
+                        Unlock Admin Portal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PREVIEW & DOWNLOAD NOTE MODAL -->
+    <div id="previewModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 w-full max-w-3xl rounded-2xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-indigo-950 px-6 py-4 text-white border-b border-slate-800 flex items-center justify-between shrink-0">
+                <div>
+                    <span id="prevBadge" class="text-[10px] font-bold uppercase tracking-wider bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded">CSE</span>
+                    <h3 id="prevTitle" class="font-extrabold text-base sm:text-lg leading-tight mt-1 text-slate-100">Note Title</h3>
+                </div>
+                <button onclick="closePreviewModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto custom-scrollbar space-y-4 flex-1">
+                <div class="flex items-center justify-between text-xs text-slate-400 pb-3 border-b border-slate-800">
+                    <span id="prevAuthor"><i class="fa-solid fa-user-check mr-1 text-indigo-400"></i> Admin</span>
+                    <span id="prevSem"><i class="fa-solid fa-graduation-cap mr-1 text-indigo-400"></i> Sem 3</span>
+                    <span id="prevDate"><i class="fa-solid fa-calendar mr-1 text-indigo-400"></i> Oct 2026</span>
+                </div>
+
+                <div class="text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-line bg-slate-950 p-5 rounded-2xl border border-slate-800 font-mono" id="prevBody">
+                    Content loading...
+                </div>
+            </div>
+
+            <div class="px-6 py-3.5 bg-slate-950 border-t border-slate-800 flex items-center justify-between flex-wrap gap-3 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <button onclick="triggerDirectDownload()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow transition flex items-center space-x-2">
+                        <i class="fa-solid fa-download"></i>
+                        <span id="downloadBtnText">Download Note File</span>
+                    </button>
+                    <button id="prevPdfViewBtn" onclick="openPdfDocument()" class="hidden px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl shadow transition flex items-center space-x-2">
+                        <i class="fa-solid fa-file-pdf text-rose-400"></i>
+                        <span>View PDF Document</span>
+                    </button>
+                </div>
+                <button onclick="closePreviewModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-xl transition">
+                    Close Preview
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // High-Capacity IndexedDB Database Manager (Supports up to 10 GB Storage Capacity)
+        const DB_NAME = 'BTechNotesHubDB';
+        const DB_VERSION = 1;
+        let dbInstance = null;
+
+        function initIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onerror = (e) => reject('IndexedDB error', e);
+                request.onsuccess = (e) => {
+                    dbInstance = e.target.result;
+                    resolve(dbInstance);
+                };
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('notes')) db.createObjectStore('notes', { keyPath: 'id' });
+                    if (!db.objectStoreNames.contains('notices')) db.createObjectStore('notices', { keyPath: 'id' });
+                    if (!db.objectStoreNames.contains('requests')) db.createObjectStore('requests', { keyPath: 'id' });
+                    if (!db.objectStoreNames.contains('bookmarks')) db.createObjectStore('bookmarks', { keyPath: 'id' });
+                };
+            });
+        }
+
+        async function dbGetAll(storeName) {
+            return new Promise((resolve) => {
+                if (!dbInstance) return resolve([]);
+                const tx = dbInstance.transaction(storeName, 'readonly');
+                const store = tx.objectStore(storeName);
+                const req = store.getAll();
+                req.onsuccess = () => resolve(req.result || []);
+                req.onerror = () => resolve([]);
+            });
+        }
+
+        async function dbPut(storeName, item) {
+            return new Promise((resolve) => {
+                if (!dbInstance) return resolve(false);
+                const tx = dbInstance.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const req = store.put(item);
+                req.onsuccess = () => resolve(true);
+                req.onerror = () => resolve(false);
+            });
+        }
+
+        async function dbDelete(storeName, id) {
+            return new Promise((resolve) => {
+                if (!dbInstance) return resolve(false);
+                const tx = dbInstance.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const req = store.delete(id);
+                req.onsuccess = () => resolve(true);
+                req.onerror = () => resolve(false);
+            });
+        }
+
+        // State variables
+        let activeRole = 'student';
+        let isAdminLoggedIn = false;
+        let studentActiveTab = 'all';
+        let adminActiveTab = 'upload';
+        let currentViewingId = null;
+        let selectedPdfData = null;
+        let selectedPdfName = '';
+        let selectedPdfSize = '';
+
+        // Default Seed Data
+        const seedNotes = [
+            {
+                id: '1',
+                title: 'Data Structures & Algorithms (CS-201) Complete Notes',
+                branch: 'CSE',
+                sem: 'Sem 3',
+                category: 'Handwritten Notes',
+                author: 'Admin',
+                date: '2026-10-01',
+                views: 520,
+                pdfUrl: '',
+                content: `UNIT 1: Arrays, Linked Lists, Stacks & Queues\n- Memory representation of 1D and 2D Arrays.\n- Singly, Doubly, and Circular Linked List implementation in C++.\n- Stack operations (Push, Pop, Peek) & Infix to Postfix conversion algorithms.\n\nUNIT 2: Trees & Graphs\n- Binary Trees, BST Insertion & Deletion logic.\n- AVL Tree rotations (LL, RR, LR, RL balancing factors).\n- Graph Traversal: BFS (Queue) and DFS (Stack/Recursion).`
+            },
+            {
+                id: '2',
+                title: 'Database Management Systems (DBMS) PYQs & Mid-Sem Solutions',
+                branch: 'IT',
+                sem: 'Sem 4',
+                category: 'PYQs & Solutions',
+                author: 'Admin',
+                date: '2026-10-04',
+                views: 410,
+                pdfUrl: '',
+                content: `TOP B.TECH SEMESTER QUESTIONS & ANSWERS:\n\nQ1: Difference between 3NF and BCNF with functional dependency example?\nAns: 3NF allows X -> Y if Y is a prime attribute even if X is not a super key. BCNF strictly requires X to be a super key for every functional dependency X -> Y.\n\nQ2: ACID Properties of Transactions in DBMS.`
+            }
+        ];
+
+       
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await initIndexedDB();
+
+            if (!localStorage.getItem('btech_admin_pass')) localStorage.setItem('btech_admin_pass', 'admin123');
+
+            // Seed initial records if empty
+            const existingNotes = await dbGetAll('notes');
+            if (existingNotes.length === 0) {
+                for (const note of seedNotes) await dbPut('notes', note);
+            }
+
+            const existingNotices = await dbGetAll('notices');
+            if (existingNotices.length === 0) {
+                for (const notice of seedNotices) await dbPut('notices', notice);
+            }
+
+            renderAll();
+        });
+
+        async function renderAll() {
+            renderHeaderUI();
+            await renderStudentNotices();
+            await renderStudentNotes();
+            await renderAdminStats();
+            await renderAdminTable();
+            await renderAdminRequests();
+            await renderStudentRequestsReplies();
+            await renderAdminNotices();
+            await calculateStorageUsage();
+        }
+
+        // Calculate and render Storage Usage Meter (10 GB Max Capacity)
+        async function calculateStorageUsage() {
+            const notes = await dbGetAll('notes');
+            let totalBytes = 0;
+
+            notes.forEach(n => {
+                if (n.pdfData) totalBytes += n.pdfData.length;
+                if (n.content) totalBytes += n.content.length;
+                if (n.title) totalBytes += n.title.length;
+            });
+
+            const totalMB = (totalBytes / (1024 * 1024)).toFixed(2);
+            const MAX_CAPACITY_MB = 10000; // 10 GB limit benchmark
+            const percent = ((totalMB / MAX_CAPACITY_MB) * 100).toFixed(2);
+
+            const usageText = document.getElementById('storageUsageText');
+            const progressBar = document.getElementById('storageProgressBar');
+
+            if (usageText) usageText.innerText = `${totalMB} MB / 10,000 MB (${percent}% Used of 10 GB)`;
+            if (progressBar) progressBar.style.width = `${Math.max(0.5, Math.min(100, percent))}%`;
+        }
+
+        function switchRole(role) {
+            if (role === 'admin' && !isAdminLoggedIn) {
+                openAdminModal();
+                return;
+            }
+
+            activeRole = role;
+            const studentZone = document.getElementById('studentZone');
+            const adminZone = document.getElementById('adminZone');
+
+            if (role === 'admin') {
+                studentZone.classList.add('hidden');
+                adminZone.classList.remove('hidden');
+            } else {
+                studentZone.classList.remove('hidden');
+                adminZone.classList.add('hidden');
+            }
+
+            renderHeaderUI();
+        }
+
+        function renderHeaderUI() {
+            const badgeText = document.getElementById('roleBadgeText');
+            const badgeDot = document.getElementById('roleBadgeDot');
+            const btnRoleStudent = document.getElementById('btnRoleStudent');
+            const btnRoleAdmin = document.getElementById('btnRoleAdmin');
+
+            if (activeRole === 'admin' && isAdminLoggedIn) {
+                badgeText.innerText = 'Admin Portal Mode';
+                badgeDot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+                btnRoleAdmin.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center space-x-1.5 bg-indigo-600 text-white shadow';
+                btnRoleStudent.className = 'px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all duration-200 flex items-center space-x-1.5';
+            } else {
+                badgeText.innerText = 'Student View';
+                badgeDot.className = 'w-2 h-2 rounded-full bg-cyan-400 animate-pulse';
+                btnRoleStudent.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center space-x-1.5 bg-indigo-600 text-white shadow';
+                btnRoleAdmin.className = 'px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all duration-200 flex items-center space-x-1.5';
+            }
+        }
+
+        function openAdminModal() {
+            document.getElementById('adminPassInput').value = '';
+            document.getElementById('adminAuthError').classList.add('hidden');
+            document.getElementById('adminAuthModal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('adminPassInput').focus(), 100);
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminAuthModal').classList.add('hidden');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const entered = document.getElementById('adminPassInput').value;
+            const correct = localStorage.getItem('btech_admin_pass') || 'admin123';
+
+            if (entered === correct) {
+                isAdminLoggedIn = true;
+                closeAdminModal();
+                switchRole('admin');
+                showToast('Welcome Admin!', 'success');
+            } else {
+                document.getElementById('adminAuthError').classList.remove('hidden');
+            }
+        }
+
+        function lockAdminPortal() {
+            isAdminLoggedIn = false;
+            switchRole('student');
+            showToast('Logged out from Admin Portal', 'info');
+        }
+
+        function switchStudentTab(tab) {
+            studentActiveTab = tab;
+            const btnAll = document.getElementById('sTabAll');
+            const btnSaved = document.getElementById('sTabSaved');
+            const btnRequest = document.getElementById('sTabRequest');
+
+            btnAll.className = 'pb-3 flex items-center space-x-2 ' + (tab === 'all' ? 'text-indigo-400 border-b-2 border-indigo-500 font-bold' : 'text-slate-400 hover:text-indigo-300');
+            btnSaved.className = 'pb-3 flex items-center space-x-2 ' + (tab === 'saved' ? 'text-indigo-400 border-b-2 border-indigo-500 font-bold' : 'text-slate-400 hover:text-indigo-300');
+            btnRequest.className = 'pb-3 flex items-center space-x-2 ' + (tab === 'request' ? 'text-indigo-400 border-b-2 border-indigo-500 font-bold' : 'text-slate-400 hover:text-indigo-300');
+
+            if (tab === 'request') {
+                document.getElementById('studentNotesGrid').classList.add('hidden');
+                document.getElementById('studentRequestSection').classList.remove('hidden');
+            } else {
+                document.getElementById('studentNotesGrid').classList.remove('hidden');
+                document.getElementById('studentRequestSection').classList.add('hidden');
+                renderStudentNotes();
+            }
+        }
+
+        function switchAdminTab(tab) {
+            adminActiveTab = tab;
+            const tabs = ['Upload', 'Manage', 'Requests', 'Notices', 'Security'];
+
+            tabs.forEach(t => {
+                const btn = document.getElementById(`aTab${t}`);
+                const sec = document.getElementById(`aSec${t}`);
+                if (btn && sec) {
+                    if (t.toLowerCase() === tab.toLowerCase()) {
+                        btn.className = 'pb-3 text-indigo-400 border-b-2 border-indigo-500 flex items-center space-x-2 shrink-0 font-bold';
+                        sec.classList.remove('hidden');
+                    } else {
+                        btn.className = 'pb-3 text-slate-400 hover:text-indigo-300 flex items-center space-x-2 shrink-0';
+                        sec.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
+        async function renderStudentNotes() {
+            const notes = await dbGetAll('notes');
+            const bookmarks = await dbGetAll('bookmarks');
+            const bookmarkIds = bookmarks.map(b => b.id);
+
+            document.getElementById('bookmarkCount').innerText = bookmarkIds.length;
+
+            const keyword = document.getElementById('filterKeyword').value.toLowerCase();
+            const branch = document.getElementById('filterBranch').value;
+            const sem = document.getElementById('filterSem').value;
+            const category = document.getElementById('filterCategory').value;
+
+            const grid = document.getElementById('studentNotesGrid');
+            grid.innerHTML = '';
+
+            let filtered = notes.filter(n => {
+                const matchK = n.title.toLowerCase().includes(keyword) || n.content.toLowerCase().includes(keyword);
+                const matchB = branch === 'all' || n.branch === branch;
+                const matchS = sem === 'all' || n.sem === sem;
+                const matchC = category === 'all' || n.category === category;
+                return matchK && matchB && matchS && matchC;
+            });
+
+            if (studentActiveTab === 'saved') {
+                filtered = filtered.filter(n => bookmarkIds.includes(n.id));
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center bg-slate-900 rounded-2xl border border-slate-800">
+                        <i class="fa-solid fa-folder-open text-4xl text-slate-600 mb-3"></i>
+                        <h4 class="font-bold text-slate-300 text-sm">No engineering notes found</h4>
+                        <p class="text-xs text-slate-500 mt-1">Try clearing your filters or search keywords.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(note => {
+                const isSaved = bookmarkIds.includes(note.id);
+                const hasPdf = note.pdfData || note.pdfUrl;
+                const card = document.createElement('div');
+                card.className = "bg-slate-900 rounded-2xl border border-slate-800 p-5 shadow-sm hover:border-slate-700 transition flex flex-col justify-between group";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3 gap-2">
+                            <span class="px-2.5 py-0.5 bg-indigo-500/10 text-indigo-400 font-bold text-[10px] uppercase rounded border border-indigo-500/20">
+                                ${note.branch} • ${note.sem}
+                            </span>
+                            <div class="flex items-center space-x-2">
+                                ${hasPdf ? `<span class="text-[10px] text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-file-pdf mr-1"></i>PDF</span>` : ''}
+                                <span class="text-[10px] text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded font-semibold">${note.category}</span>
+                                <button onclick="toggleBookmark('${note.id}')" title="Save Note" class="text-slate-500 hover:text-amber-400 transition">
+                                    <i class="${isSaved ? 'fa-solid fa-bookmark text-amber-400' : 'fa-regular fa-bookmark'}"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <h3 class="font-bold text-slate-100 text-sm sm:text-base leading-snug line-clamp-2 mb-2 group-hover:text-indigo-300 transition cursor-pointer" onclick="openPreviewModal('${note.id}')">
+                            ${note.title}
+                        </h3>
+
+                        <p class="text-xs text-slate-400 line-clamp-3 mb-4 leading-relaxed font-mono bg-slate-950 p-2.5 rounded-xl border border-slate-800/80">
+                            ${note.content}
+                        </p>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
+                        <span class="text-slate-500 text-[11px]"><i class="fa-solid fa-user-check mr-1 text-indigo-400"></i> ${note.author}</span>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="openPreviewModal('${note.id}')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-indigo-300 font-semibold text-xs rounded-xl transition">
+                                Preview
+                            </button>
+                            <button onclick="downloadSingleNote('${note.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow transition flex items-center space-x-1">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Download</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        async function toggleBookmark(id) {
+            const bookmarks = await dbGetAll('bookmarks');
+            const exists = bookmarks.find(b => b.id === id);
+            if (exists) {
+                await dbDelete('bookmarks', id);
+                showToast('Removed from Bookmarks', 'info');
+            } else {
+                await dbPut('bookmarks', { id, addedAt: Date.now() });
+                showToast('Added to Bookmarks!', 'success');
+            }
+            renderStudentNotes();
+        }
+
+        function handlePdfFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.type !== 'application/pdf') {
+                showToast('Please select a valid PDF file!', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                selectedPdfData = e.target.result;
+                selectedPdfName = file.name;
+                selectedPdfSize = (file.size / 1024 < 1024) 
+                    ? (file.size / 1024).toFixed(1) + ' KB' 
+                    : (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+                document.getElementById('pdfFileName').innerText = selectedPdfName;
+                document.getElementById('pdfFileSize').innerText = selectedPdfSize;
+                document.getElementById('pdfDropzone').classList.add('hidden');
+                document.getElementById('pdfFileInfo').classList.remove('hidden');
+                showToast(`PDF attached (${selectedPdfSize})!`, 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeSelectedPdf() {
+            selectedPdfData = null;
+            selectedPdfName = '';
+            selectedPdfSize = '';
+            document.getElementById('addPdfFileInput').value = '';
+            document.getElementById('pdfDropzone').classList.remove('hidden');
+            document.getElementById('pdfFileInfo').classList.add('hidden');
+        }
+
+        async function handleAdminUploadNote(e) {
+            e.preventDefault();
+            const title = document.getElementById('addTitle').value;
+            const branch = document.getElementById('addBranch').value;
+            const sem = document.getElementById('addSem').value;
+            const category = document.getElementById('addCategory').value;
+            const author = document.getElementById('addAuthor').value;
+            const content = document.getElementById('addContent').value;
+            const pdfUrl = document.getElementById('addPdfUrl').value;
+
+            const newNote = {
+                id: Date.now().toString(),
+                title,
+                branch,
+                sem,
+                category,
+                author,
+                date: new Date().toISOString().split('T')[0],
+                views: 0,
+                pdfUrl,
+                pdfData: selectedPdfData,
+                pdfFileName: selectedPdfName,
+                pdfFileSize: selectedPdfSize,
+                content
+            };
+
+            await dbPut('notes', newNote);
+
+            document.getElementById('addTitle').value = '';
+            document.getElementById('addContent').value = '';
+            document.getElementById('addPdfUrl').value = '';
+            removeSelectedPdf();
+
+            await renderAll();
+            showToast('Note & PDF Published Successfully!', 'success');
+            switchAdminTab('manage');
+        }
+
+        // Delete entire note
+        async function deleteAdminNote(id) {
+            await dbDelete('notes', id);
+            await renderAll();
+            showToast('Note deleted by Admin', 'info');
+        }
+
+        // Specifically Delete PDF from a Note without deleting the note itself
+        async function deletePdfFromNote(id) {
+            const notes = await dbGetAll('notes');
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+
+            note.pdfData = null;
+            note.pdfUrl = null;
+            note.pdfFileName = null;
+            note.pdfFileSize = null;
+
+            await dbPut('notes', note);
+            await renderAll();
+            showToast('PDF file detached & removed from this note!', 'success');
+        }
+
+        async function renderAdminTable() {
+            const notes = await dbGetAll('notes');
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+
+            if (notes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">No notes uploaded yet.</td></tr>`;
+                return;
+            }
+
+            notes.forEach(n => {
+                const hasPdf = n.pdfData || n.pdfUrl;
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-800 hover:bg-slate-950 transition';
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-200">
+                        ${n.title}
+                        <div class="text-[10px] text-slate-500 mt-0.5">${n.category} • ${n.date}</div>
+                    </td>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 bg-indigo-500/10 text-indigo-400 font-bold rounded text-[11px]">${n.branch}</span>
+                        <span class="text-slate-400 text-xs ml-1">${n.sem}</span>
+                    </td>
+                    <td class="p-3">
+                        ${hasPdf ? `
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 font-bold rounded text-[10px]">
+                                    <i class="fa-solid fa-file-pdf mr-1"></i> Attached ${n.pdfFileName ? '(' + n.pdfFileName + ')' : ''}
+                                </span>
+                                <button onclick="deletePdfFromNote('${n.id}')" title="Delete attached PDF only" class="px-2 py-1 bg-rose-950 hover:bg-rose-900 text-rose-300 font-semibold text-[10px] rounded border border-rose-800 transition flex items-center space-x-1">
+                                    <i class="fa-solid fa-trash"></i>
+                                    <span>Delete PDF</span>
+                                </button>
+                            </div>
+                        ` : `
+                            <span class="text-slate-500 text-[11px] italic">No PDF attached</span>
+                        `}
+                    </td>
+                    <td class="p-3 text-right">
+                        <button onclick="openPreviewModal('${n.id}')" class="text-indigo-400 hover:text-indigo-300 mr-3 font-semibold">Preview</button>
+                        <button onclick="deleteAdminNote('${n.id}')" class="text-rose-400 hover:text-rose-300 font-semibold">Delete Note</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function handleSendStudentRequest(e) {
+            e.preventDefault();
+            const studentName = document.getElementById('reqStudentName').value;
+            const subject = document.getElementById('reqSubject').value;
+            const message = document.getElementById('reqMessage').value;
+
+            const newReq = {
+                id: Date.now().toString(),
+                studentName,
+                subject,
+                message,
+                adminReply: '',
+                replyDate: '',
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            };
+
+            await dbPut('requests', newReq);
+            document.getElementById('reqStudentName').value = '';
+            document.getElementById('reqSubject').value = '';
+            document.getElementById('reqMessage').value = '';
+
+            showToast('Request submitted to Admin successfully!', 'success');
+            await renderAll();
+        }
+
+        // Admin Reply Handler
+        async function handleSendAdminReply(e, id) {
+            e.preventDefault();
+            const replyInput = document.getElementById(`replyInput_${id}`);
+            if (!replyInput) return;
+
+            const replyText = replyInput.value.trim();
+            if (!replyText) return;
+
+            const requests = await dbGetAll('requests');
+            const req = requests.find(r => r.id === id);
+            if (!req) return;
+
+            req.adminReply = replyText;
+            req.replyDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+            await dbPut('requests', req);
+            showToast('Reply sent to student!', 'success');
+            await renderAll();
+        }
+
+        // Admin Delete Request Handler
+        async function deleteAdminRequest(id) {
+            await dbDelete('requests', id);
+            showToast('Student request deleted!', 'info');
+            await renderAll();
+        }
+
+        async function renderAdminRequests() {
+            const requests = await dbGetAll('requests');
+            const list = document.getElementById('adminRequestsList');
+            list.innerHTML = '';
+
+            if (requests.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-500 py-4 text-center">No student requests submitted.</p>`;
+                return;
+            }
+
+            requests.forEach(r => {
+                const div = document.createElement('div');
+                div.className = "bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3";
+                div.innerHTML = `
+                    <div class="flex items-start justify-between text-xs gap-2">
+                        <div>
+                            <span class="font-bold text-indigo-400 text-sm">${r.studentName}</span>
+                            <span class="text-slate-400 ml-1">Subject: <strong class="text-slate-200">${r.subject}</strong></span>
+                            <div class="text-[10px] text-slate-500 mt-0.5"><i class="fa-solid fa-clock mr-1"></i>Requested on ${r.date}</div>
+                        </div>
+                        <button onclick="deleteAdminRequest('${r.id}')" class="px-2.5 py-1 bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800/80 rounded-lg text-[11px] font-semibold transition flex items-center space-x-1 shrink-0">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>Delete Request</span>
+                        </button>
+                    </div>
+
+                    <div class="p-3 bg-slate-900 rounded-lg border border-slate-800/80 text-xs text-slate-200 font-mono">
+                        <i class="fa-solid fa-quote-left text-slate-600 mr-1.5"></i>${r.message}
+                    </div>
+
+                    ${r.adminReply ? `
+                        <div class="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs space-y-1">
+                            <div class="flex items-center justify-between text-[11px] font-bold text-emerald-400">
+                                <span><i class="fa-solid fa-reply mr-1"></i> Admin Reply:</span>
+                                <span class="text-slate-500 text-[10px]">${r.replyDate || ''}</span>
+                            </div>
+                            <p class="text-slate-200 font-medium">${r.adminReply}</p>
+                        </div>
+                    ` : ''}
+
+                    <form onsubmit="handleSendAdminReply(event, '${r.id}')" class="flex items-center space-x-2 pt-1">
+                        <input type="text" id="replyInput_${r.id}" required placeholder="${r.adminReply ? 'Update reply...' : 'Type reply for student...'}" class="flex-1 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:border-indigo-500 focus:outline-none">
+                        <button type="submit" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl shadow transition flex items-center space-x-1 shrink-0">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>${r.adminReply ? 'Update Reply' : 'Send Reply'}</span>
+                        </button>
+                    </form>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        async function renderStudentRequestsReplies() {
+            const requests = await dbGetAll('requests');
+            const list = document.getElementById('studentRequestsRepliesList');
+            if (!list) return;
+            list.innerHTML = '';
+
+            if (requests.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-500 italic text-center py-2">No request history found.</p>`;
+                return;
+            }
+
+            requests.forEach(r => {
+                const div = document.createElement('div');
+                div.className = "bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2";
+                div.innerHTML = `
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="font-bold text-slate-200">${r.subject} <span class="text-slate-500 font-normal">(${r.studentName})</span></div>
+                        <span class="text-[10px] text-slate-500">${r.date}</span>
+                    </div>
+                    <p class="text-xs text-slate-400 font-mono">${r.message}</p>
+
+                    ${r.adminReply ? `
+                        <div class="p-2.5 bg-indigo-950/40 border border-indigo-500/30 rounded-lg text-xs space-y-1 mt-2">
+                            <div class="flex items-center justify-between text-[10px] font-bold text-indigo-300">
+                                <span><i class="fa-solid fa-user-shield mr-1 text-amber-400"></i> Admin Response:</span>
+                                <span class="text-slate-500">${r.replyDate || ''}</span>
+                            </div>
+                            <p class="text-slate-100 font-semibold">${r.adminReply}</p>
+                        </div>
+                    ` : `
+                        <div class="text-[10px] text-amber-400/80 italic font-medium flex items-center space-x-1 mt-1">
+                            <i class="fa-solid fa-hourglass-half text-amber-400"></i>
+                            <span>Pending Admin Review & Reply...</span>
+                        </div>
+                    `}
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        async function handlePostNotice(e) {
+            e.preventDefault();
+            const text = document.getElementById('noticeInput').value;
+            const notice = {
+                id: Date.now().toString(),
+                text,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            };
+
+            await dbPut('notices', notice);
+            document.getElementById('noticeInput').value = '';
+            await renderAll();
+            showToast('Notice Posted!', 'success');
+        }
+
+        async function deleteNotice(id) {
+            await dbDelete('notices', id);
+            await renderAll();
+            showToast('Notice Removed', 'info');
+        }
+
+        async function renderAdminNotices() {
+            const notices = await dbGetAll('notices');
+            const container = document.getElementById('adminNoticesList');
+            container.innerHTML = '';
+
+            notices.forEach(n => {
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between bg-slate-950 p-2.5 rounded-xl text-xs border border-slate-800";
+                div.innerHTML = `
+                    <span class="text-slate-300">${n.text}</span>
+                    <button onclick="deleteNotice('${n.id}')" class="text-rose-400 hover:text-rose-300 font-semibold ml-2">Remove</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function renderStudentNotices() {
+            const notices = await dbGetAll('notices');
+            const container = document.getElementById('studentNoticeList');
+            container.innerHTML = '';
+
+            if (notices.length === 0) {
+                container.innerHTML = `<p class="text-slate-500 italic">No current announcements.</p>`;
+                return;
+            }
+
+            notices.forEach(n => {
+                const p = document.createElement('p');
+                p.className = 'leading-normal';
+                p.innerHTML = `<i class="fa-solid fa-chevron-right text-[10px] text-indigo-400 mr-1.5"></i> ${n.text} <span class="text-slate-500 text-[10px]">(${n.date})</span>`;
+                container.appendChild(p);
+            });
+        }
+
+        function handleChangeAdminPassword(e) {
+            e.preventDefault();
+            const curr = document.getElementById('currPassInput').value;
+            const newP = document.getElementById('newPassInput').value;
+            const correct = localStorage.getItem('btech_admin_pass') || 'admin123';
+
+            if (curr !== correct) {
+                showToast('Current password incorrect!', 'error');
+                return;
+            }
+
+            localStorage.setItem('btech_admin_pass', newP);
+            document.getElementById('currPassInput').value = '';
+            document.getElementById('newPassInput').value = '';
+            showToast('Admin password updated successfully!', 'success');
+        }
+
+        async function renderAdminStats() {
+            const notes = await dbGetAll('notes');
+            const requests = await dbGetAll('requests');
+            const notices = await dbGetAll('notices');
+
+            const pdfCount = notes.filter(n => n.pdfData || n.pdfUrl).length;
+
+            document.getElementById('statTotalNotes').innerText = notes.length;
+            document.getElementById('statTotalPdfs').innerText = pdfCount;
+            document.getElementById('statRequests').innerText = requests.length;
+            document.getElementById('statNotices').innerText = notices.length;
+        }
+
+        async function openPreviewModal(id) {
+            const notes = await dbGetAll('notes');
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+
+            currentViewingId = id;
+            document.getElementById('prevBadge').innerText = `${note.branch} • ${note.sem}`;
+            document.getElementById('prevTitle').innerText = note.title;
+            document.getElementById('prevAuthor').innerHTML = `<i class="fa-solid fa-user-check mr-1 text-indigo-400"></i> Uploaded by: ${note.author}`;
+            document.getElementById('prevSem').innerHTML = `<i class="fa-solid fa-graduation-cap mr-1 text-indigo-400"></i> ${note.sem}`;
+            document.getElementById('prevDate').innerHTML = `<i class="fa-solid fa-calendar mr-1 text-indigo-400"></i> ${note.date}`;
+            document.getElementById('prevBody').innerText = note.content;
+
+            const pdfBtn = document.getElementById('prevPdfViewBtn');
+            const downloadText = document.getElementById('downloadBtnText');
+
+            if (note.pdfData || note.pdfUrl) {
+                pdfBtn.classList.remove('hidden');
+                downloadText.innerText = note.pdfData ? 'Download Attached PDF' : 'Download Note File';
+            } else {
+                pdfBtn.classList.add('hidden');
+                downloadText.innerText = 'Download Note File (.txt)';
+            }
+
+            note.views = (note.views || 0) + 1;
+            await dbPut('notes', note);
+
+            document.getElementById('previewModal').classList.remove('hidden');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').classList.add('hidden');
+        }
+
+        async function openPdfDocument() {
+            const notes = await dbGetAll('notes');
+            const note = notes.find(n => n.id === currentViewingId);
+            if (!note) return;
+
+            if (note.pdfData) {
+                const pdfWindow = window.open();
+                if (pdfWindow) {
+                    pdfWindow.document.write(`<iframe src="${note.pdfData}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+                } else {
+                    showToast('Pop-up blocked! Please allow pop-ups.', 'error');
+                }
+            } else if (note.pdfUrl) {
+                window.open(note.pdfUrl, '_blank');
+            }
+        }
+
+        async function downloadSingleNote(id) {
+            currentViewingId = id;
+            await triggerDirectDownload();
+        }
+
+        async function triggerDirectDownload() {
+            const notes = await dbGetAll('notes');
+            const note = notes.find(n => n.id === currentViewingId);
+            if (!note) return;
+
+            if (note.pdfData) {
+                const a = document.createElement('a');
+                a.href = note.pdfData;
+                a.download = note.pdfFileName || `${note.title.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                showToast('Downloading attached PDF file...', 'success');
+                return;
+            }
+
+            if (note.pdfUrl) {
+                window.open(note.pdfUrl, '_blank');
+                showToast('Opening external PDF file...', 'info');
+                return;
+            }
+
+            const downloadText = `=========================================\nB.TECH ENGINEERING STUDY NOTE\nTitle: ${note.title}\nBranch: ${note.branch} | Semester: ${note.sem}\nCategory: ${note.category}\nUploaded By: ${note.author} (${note.date})\n=========================================\n\nSYLLABUS & CONTENT:\n${note.content}\n`;
+
+            const blob = new Blob([downloadText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${note.title.replace(/[^a-zA-Z0-9]/g, '_')}_Notes.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast('Note File Downloaded Successfully!', 'success');
+        }
+
+        function showToast(msg, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+
+            let bgClass = 'bg-slate-900 text-slate-100 border border-slate-700';
+            if (type === 'success') bgClass = 'bg-emerald-600 text-white';
+            if (type === 'error') bgClass = 'bg-rose-600 text-white';
+
+            toast.className = `pointer-events-auto flex items-center space-x-2 px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold transform transition-all duration-300 opacity-0 translate-y-2 ${bgClass}`;
+            toast.innerHTML = `<span>${msg}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', 'translate-y-2');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
